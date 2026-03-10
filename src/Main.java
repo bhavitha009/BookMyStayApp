@@ -1,35 +1,40 @@
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
-class Room {
+class Reservation {
 
+    String guestName;
     String roomType;
-    double price;
 
-    Room(String roomType, double price) {
+    Reservation(String guestName, String roomType) {
+        this.guestName = guestName;
         this.roomType = roomType;
-        this.price = price;
     }
 
-    void displayDetails() {
-        System.out.println("Room Type : " + roomType);
-        System.out.println("Price     : $" + price);
+    void displayRequest() {
+        System.out.println("Guest : " + guestName + " requested " + roomType);
     }
 }
 
-class RoomInventory {
+class BookingRequestQueue {
 
-    private HashMap<String, Integer> inventory;
+    private Queue<Reservation> queue;
 
-    RoomInventory() {
-        inventory = new HashMap<>();
-
-        inventory.put("Single Room", 5);
-        inventory.put("Double Room", 3);
-        inventory.put("Suite Room", 0);
+    BookingRequestQueue() {
+        queue = new LinkedList<>();
     }
 
-    public int getAvailability(String roomType) {
-        return inventory.getOrDefault(roomType, 0);
+    public void addRequest(Reservation reservation) {
+        queue.add(reservation);
+        System.out.println("Booking request added for " + reservation.guestName);
+    }
+
+    public void displayRequests() {
+        System.out.println("\nCurrent Booking Requests (FIFO Order)\n");
+
+        for (Reservation r : queue) {
+            r.displayRequest();
+        }
     }
 }
 
@@ -37,27 +42,19 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("Book My Stay - Version 4.1");
-        System.out.println("Room Search & Availability Check\n");
+        System.out.println("Book My Stay - Version 5.1");
+        System.out.println("Booking Request Queue (First-Come-First-Served)\n");
 
-        RoomInventory inventory = new RoomInventory();
+        BookingRequestQueue bookingQueue = new BookingRequestQueue();
 
-        Room single = new Room("Single Room", 100);
-        Room doub = new Room("Double Room", 180);
-        Room suite = new Room("Suite Room", 300);
+        Reservation r1 = new Reservation("Alice", "Single Room");
+        Reservation r2 = new Reservation("Bob", "Double Room");
+        Reservation r3 = new Reservation("Charlie", "Suite Room");
 
-        Room[] rooms = {single, doub, suite};
+        bookingQueue.addRequest(r1);
+        bookingQueue.addRequest(r2);
+        bookingQueue.addRequest(r3);
 
-        for (Room room : rooms) {
-
-            int available = inventory.getAvailability(room.roomType);
-
-            if (available > 0) {
-
-                room.displayDetails();
-                System.out.println("Available Rooms : " + available);
-                System.out.println();
-            }
-        }
+        bookingQueue.displayRequests();
     }
 }
