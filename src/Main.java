@@ -1,26 +1,31 @@
 import java.util.*;
 
+class Reservation {
+    String guestName;
+    String roomType;
+
+    Reservation(String guestName, String roomType) {
+        this.guestName = guestName;
+        this.roomType = roomType;
+    }
+}
+
 public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("Add-On Service Selection");
+        System.out.println("Booking History and Reporting\n");
 
-        String reservationId = "Single-1";
+        System.out.println("Booking History Report\n");
 
-        List<Integer> services = new ArrayList<>();
+        List<Reservation> history = new ArrayList<>();
 
-        services.add(500);
-        services.add(500);
-        services.add(500);
+        history.add(new Reservation("Abhi", "Single"));
+        history.add(new Reservation("Subha", "Double"));
+        history.add(new Reservation("Vanmathi", "Suite"));
 
-        int totalCost = 0;
-
-        for (int cost : services) {
-            totalCost += cost;
+        for (Reservation r : history) {
+            System.out.println("Guest: " + r.guestName + ", Room Type: " + r.roomType);
         }
-
-        System.out.println("Reservation ID: " + reservationId);
-        System.out.println("Total Add-On Cost: " + totalCost + ".0");
     }
-}}
+}
