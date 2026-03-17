@@ -1,44 +1,33 @@
 import java.util.*;
 
-class InvalidBookingException extends Exception {
-    public InvalidBookingException(String message) {
-        super(message);
-    }
-}
-
 public class Main {
 
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
+        System.out.println("Booking Cancellation");
 
-        System.out.println("Booking Validation");
+        // Existing reservation
+        String reservationId = "Single-1";
+        String roomType = "Single";
 
-        try {
-            System.out.print("Enter guest name: ");
-            String name = sc.nextLine();
+        // Inventory (before cancellation)
+        int singleRooms = 5;
 
-            System.out.print("Enter room type (Single/Double/Suite): ");
-            String roomType = sc.nextLine();
+        // Stack for rollback (LIFO)
+        Stack<String> rollbackStack = new Stack<>();
 
-            validateRoomType(roomType);
+        // Cancel booking
+        rollbackStack.push(reservationId);
+        singleRooms++;  // restore inventory
 
-            System.out.println("Booking successful for " + name);
+        System.out.println("Booking cancelled successfully. Inventory restored for room type: " + roomType);
 
-        } catch (InvalidBookingException e) {
-            System.out.println("Booking failed: " + e.getMessage());
+        System.out.println("\nRollback History (Most Recent First):");
+
+        while (!rollbackStack.isEmpty()) {
+            System.out.println("Released Reservation ID: " + rollbackStack.pop());
         }
 
-        sc.close();
-    }
-
-    public static void validateRoomType(String roomType) throws InvalidBookingException {
-
-        if (!(roomType.equals("Single") ||
-                roomType.equals("Double") ||
-                roomType.equals("Suite"))) {
-
-            throw new InvalidBookingException("Invalid room type selected.");
-        }
+        System.out.println("\nUpdated Single Room Availability: " + singleRooms);
     }
 }
