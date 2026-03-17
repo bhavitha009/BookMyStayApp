@@ -1,67 +1,74 @@
+import java.io.*;
 import java.util.*;
-
-class BookingService {
-
-    private Map<String, Integer> inventory = new HashMap<>();
-
-    public BookingService() {
-        inventory.put("Single", 5);
-        inventory.put("Double", 3);
-        inventory.put("Suite", 2);
-    }
-
-    public synchronized String bookRoom(String guest, String type) {
-
-        int count = inventory.get(type);
-
-        if (count > 0) {
-            int roomNumber = (type.equals("Single")) ? (6 - count)
-                    : (type.equals("Double")) ? (4 - count)
-                    : (3 - count);
-
-            inventory.put(type, count - 1);
-
-            return "Booking confirmed for Guest: " + guest + ", Room ID: " + type + "-" + roomNumber;
-        } else {
-            return "No rooms available for " + type;
-        }
-    }
-
-    public void printInventory() {
-        System.out.println("\nRemaining Inventory:");
-        System.out.println("Single: " + inventory.get("Single"));
-        System.out.println("Double: " + inventory.get("Double"));
-        System.out.println("Suite: " + inventory.get("Suite"));
-    }
-}
 
 public class Main {
 
+    static String fileName = "inventory.txt";
+
     public static void main(String[] args) {
 
-        System.out.println("Concurrent Booking Simulation");
+        System.out.println("System Recovery");
 
-        BookingService service = new BookingService();
+        Map<String, Integer> inventory = loadData();
 
-        Thread t1 = new Thread(() -> System.out.println(service.bookRoom("Abhi", "Single")));
-        Thread t2 = new Thread(() -> System.out.println(service.bookRoom("Vanmathi", "Double")));
-        Thread t3 = new Thread(() -> System.out.println(service.bookRoom("Kural", "Suite")));
-        Thread t4 = new Thread(() -> System.out.println(service.bookRoom("Subha", "Single")));
+        System.out.println("\nCurrent Inventory:");
+        System.out.println("Single: " + inventory.get("Single"));
+        System.out.println("Double: " + inventory.get("Double"));
+        System.out.println("Suite: " + inventory.get("Suite"));
 
-        t1.start();
-        t2.start();
-        t3.start();
-        t4.start();
+        saveData(inventory);
+    }
+
+    // Load inventory from file
+    public static Map<String, Integer> loadData() {
+
+        Map<String, Integer> inventory = new HashMap<>();
 
         try {
-            t1.join();
-            t2.join();
-            t3.join();
-            t4.join();
+            File file = new File(fileName);
+
+            if (!file.exists()) {
+                throw new Exception();
+            }
+
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            inventory.put("Single", Integer.parseInt(br.readLine()));
+            inventory.put("Double", Integer.parseInt(br.readLine()));
+            inventory.put("Suite", Integer.parseInt(br.readLine()));
+
+            br.close();
+
+            System.out.println("Inventory loaded successfully.");
+
         } catch (Exception e) {
-            e.printStackTrace();
+
+            System.out.println("No valid inventory data found. Starting fresh.");
+
+            inventory.put("Single", 5);
+            inventory.put("Double", 3);
+            inventory.put("Suite", 2);
         }
 
-        service.printInventory();
+        return inventory;
+    }
+
+    // Save inventory to file
+    public static void saveData(Map<String, Integer> inventory) {
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+
+            bw.write(inventory.get("Single") + "\n");
+            bw.write(inventory.get("Double") + "\n");
+            bw.write(inventory.get("Suite") + "\n");
+
+            bw.close();
+
+            System.out.println("Inventory saved successfully.");
+
+        } catch (Exception e) {
+            System.out.println("Error saving inventory.");
+        }
     }
 }
