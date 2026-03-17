@@ -1,12 +1,8 @@
 import java.util.*;
 
-class Reservation {
-    String guestName;
-    String roomType;
-
-    Reservation(String guestName, String roomType) {
-        this.guestName = guestName;
-        this.roomType = roomType;
+class InvalidBookingException extends Exception {
+    public InvalidBookingException(String message) {
+        super(message);
     }
 }
 
@@ -14,18 +10,35 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("Booking History and Reporting\n");
+        Scanner sc = new Scanner(System.in);
 
-        System.out.println("Booking History Report\n");
+        System.out.println("Booking Validation");
 
-        List<Reservation> history = new ArrayList<>();
+        try {
+            System.out.print("Enter guest name: ");
+            String name = sc.nextLine();
 
-        history.add(new Reservation("Abhi", "Single"));
-        history.add(new Reservation("Subha", "Double"));
-        history.add(new Reservation("Vanmathi", "Suite"));
+            System.out.print("Enter room type (Single/Double/Suite): ");
+            String roomType = sc.nextLine();
 
-        for (Reservation r : history) {
-            System.out.println("Guest: " + r.guestName + ", Room Type: " + r.roomType);
+            validateRoomType(roomType);
+
+            System.out.println("Booking successful for " + name);
+
+        } catch (InvalidBookingException e) {
+            System.out.println("Booking failed: " + e.getMessage());
+        }
+
+        sc.close();
+    }
+
+    public static void validateRoomType(String roomType) throws InvalidBookingException {
+
+        if (!(roomType.equals("Single") ||
+                roomType.equals("Double") ||
+                roomType.equals("Suite"))) {
+
+            throw new InvalidBookingException("Invalid room type selected.");
         }
     }
 }
